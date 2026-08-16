@@ -32,9 +32,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  // Build the upstream URL
-  const encodedName = encodeURIComponent(name);
-  const encodedTag = encodeURIComponent(tag);
+  // 1. Oczyszczamy wartości z plusów (zamieniamy je na spacje)
+  const cleanName = name.replace(/\+/g, " ");
+  const cleanTag = tag.replace(/\+/g, " ");
+
+  // 2. Kodujemy poprawne wartości
+  const encodedName = encodeURIComponent(cleanName);
+  const encodedTag = encodeURIComponent(cleanTag);
+
+  // Build the upstream URL (zwróć uwagę, że tu poprawnie zostaje v3/matches)
   const url = new URL(`${HENRIK_BASE_URL}/valorant/v3/matches/${region}/${encodedName}/${encodedTag}`);
 
   if (mode && typeof mode === "string") url.searchParams.set("mode", mode);

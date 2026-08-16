@@ -20,7 +20,8 @@ export function getWinRateByAgent(matches: Match[], playerName: string, playerTa
   const statsByAgent = new Map<string, { wins: number; losses: number }>();
 
   for (const match of matches) {
-    const player = match.players.all_players.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
+    // Dodane znaki zapytania (?) zabezpieczają przed nullami
+    const player = match.players?.all_players?.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
     if (!player) continue;
 
     const teamKey = player.team.toLowerCase() as "red" | "blue";
@@ -70,7 +71,8 @@ export function getPerformanceByMap(matches: Match[], playerName: string, player
   const statsByMap = new Map<string, { wins: number; losses: number; kills: number; deaths: number; assists: number }>();
 
   for (const match of matches) {
-    const player = match.players.all_players.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
+    // Dodane znaki zapytania (?)
+    const player = match.players?.all_players?.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
     if (!player) continue;
 
     const teamKey = player.team.toLowerCase() as "red" | "blue";
@@ -122,7 +124,8 @@ export function getRoleBreakdown(matches: Match[], playerName: string, playerTag
   let totalGames = 0;
 
   for (const match of matches) {
-    const player = match.players.all_players.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
+    // Dodane znaki zapytania (?)
+    const player = match.players?.all_players?.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
     if (!player) continue;
 
     const role = getAgentRole(player.character);

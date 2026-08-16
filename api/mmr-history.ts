@@ -31,8 +31,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const encodedName = encodeURIComponent(name);
-  const encodedTag = encodeURIComponent(tag);
+  // 1. Oczyszczamy wartości z plusów (zamieniamy je na spacje)
+  const cleanName = name.replace(/\+/g, " ");
+  const cleanTag = tag.replace(/\+/g, " ");
+
+  // 2. Dopiero teraz kodujemy. cleanName = "nikki freeman" -> encodedName = "nikki%20freeman"
+  const encodedName = encodeURIComponent(cleanName);
+  const encodedTag = encodeURIComponent(cleanTag);
+
   const url = `${HENRIK_BASE_URL}/valorant/v1/mmr-history/${region}/${encodedName}/${encodedTag}`;
 
   const apiKey = process.env.HENRIK_API_KEY;

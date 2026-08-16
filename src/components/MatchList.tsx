@@ -9,7 +9,8 @@ interface MatchListProps {
 }
 
 function getPlayerResult(match: Match, name: string, tag: string) {
-  const player = match.players.all_players.find((p) => p.name.toLowerCase() === name.toLowerCase() && p.tag.toLowerCase() === tag.toLowerCase());
+  // Zabezpieczenie ? przed nullami w players i all_players
+  const player = match.players?.all_players?.find((p) => p.name.toLowerCase() === name.toLowerCase() && p.tag.toLowerCase() === tag.toLowerCase());
   if (!player) return null;
 
   const teamKey = player.team.toLowerCase() as "red" | "blue";
