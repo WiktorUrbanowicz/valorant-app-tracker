@@ -1,6 +1,7 @@
 // src/utils/stats.ts
 
 import type { Match } from "../api/types";
+import { getAgentRole } from "./agentRoles";
 
 export interface AgentStats {
   agent: string;
@@ -103,4 +104,37 @@ export function getPerformanceByMap(matches: Match[], playerName: string, player
   });
 
   return result.sort((a, b) => b.gamesPlayed - a.gamesPlayed);
+}
+
+export interface RoleBreakdown {
+  role: string;
+  gamesPlayed: number;
+  percentage: number; // 0-100, share of total games
+}
+
+/**
+ * Aggregates games played by role (Duelist/Controller/Initiator/Sentinel)
+ * using the agent-to-role lookup, since HenrikDev's match data doesn't
+ * include role directly.
+ */
+export function getRoleBreakdown(matches: Match[], playerName: string, playerTag: string): RoleBreakdown[] {
+  const gamesByRole = new Map<string, number>();
+  let totalGames = 0;
+
+  for (const match of matches) {
+    const player = match.players.all_players.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
+    if (!player) continue;
+
+    const role = getAgentRole(player.character);
+    gamesByRole.set(role, (gamesByRole.get(role) ?? 0) + 1);
+    totalGames += 1;
+  }
+
+  return Array.from(gamesByRole.entries())
+    .map(([role, gamesPlayed]) => ({
+      role,
+      gamesPlayed,
+      percentage: totalGames > 0 ? Math.round((gamesPlayed / totalGames) * 100) : 0,
+    }))
+    .sort((a, b) => b.gamesPlayed - a.gamesPlayed);
 }

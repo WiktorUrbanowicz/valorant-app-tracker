@@ -6,9 +6,10 @@ import { MatchList } from "./components/MatchList";
 import { WinRateChart } from "./components/charts/WinRateChart";
 import { MapPerformanceChart } from "./components/charts/MapPerformanceChart";
 import { RankProgressionChart } from "./components/charts/RankProgressionChart";
+import { RoleBreakdownChart } from "./components/charts/RoleBreakdownChart";
 import { useMatchHistory, MatchHistoryError } from "./api/useMatchHistory";
 import { useMmrHistory } from "./api/useMmrHistory";
-import { getWinRateByAgent, getPerformanceByMap } from "./utils/stats";
+import { getWinRateByAgent, getPerformanceByMap, getRoleBreakdown } from "./utils/stats";
 import type { Region } from "./api/types";
 import "./App.css";
 
@@ -21,7 +22,7 @@ interface SearchParams {
 function App() {
   const [searchParams, setSearchParams] = useState<SearchParams | null>(null);
 
-  const { data, isLoading, isError, error } = useMatchHistory(searchParams);
+  const { data, isLoading, isError, error } = useMatchHistory(searchParams ? { ...searchParams, size: 10 } : null);
   const { data: mmrData } = useMmrHistory(searchParams);
 
   return (
@@ -44,6 +45,9 @@ function App() {
 
             <h2 className="mt-8">Rank Progression</h2>
             <RankProgressionChart data={mmrData?.data ?? []} />
+
+            <h2 className="mt-8">Role Breakdown</h2>
+            <RoleBreakdownChart data={getRoleBreakdown(data.data, searchParams.name, searchParams.tag)} />
 
             <h2 className="mt-8">Performance by Map</h2>
             <MapPerformanceChart data={getPerformanceByMap(data.data, searchParams.name, searchParams.tag)} />

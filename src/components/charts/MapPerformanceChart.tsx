@@ -49,15 +49,20 @@ export function MapPerformanceChart({ data }: MapPerformanceChartProps) {
     );
   }
 
+  // Games played per map is usually a small number, so an integer-only
+  // y-axis reads better than fractional ticks.
+  const maxGames = Math.max(...data.map((d) => Math.max(d.wins, d.losses)));
+
   return (
     <div style={{ width: "100%", height: 320 }}>
       <ResponsiveContainer>
         <BarChart data={data} margin={{ left: 8, right: 16, top: 8, bottom: 8 }}>
           <XAxis dataKey="map" stroke={colors.text} fontSize={12} />
-          <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} stroke={colors.text} fontSize={12} />
+          <YAxis allowDecimals={false} domain={[0, Math.max(maxGames, 1)]} stroke={colors.text} fontSize={12} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: colors.border, opacity: 0.3 }} />
           <Legend wrapperStyle={{ fontSize: 13, color: colors.text }} />
-          <Bar dataKey="winRate" name="Win rate" fill={colors.accent} radius={[4, 4, 0, 0]} />
+          <Bar dataKey="wins" name="Wins" fill="#22c55e" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="losses" name="Losses" fill="#e11d48" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
