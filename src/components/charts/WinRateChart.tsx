@@ -1,6 +1,6 @@
 // src/components/charts/WinRateChart.tsx
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import type { AgentStats } from "../../utils/stats";
 
 interface WinRateChartProps {
@@ -50,17 +50,15 @@ export function WinRateChart({ data }: WinRateChartProps) {
   }
 
   return (
-    <div style={{ width: "100%", height: Math.max(200, data.length * 44) }}>
+    <div style={{ width: "100%", height: Math.max(200, data.length * 56) }}>
       <ResponsiveContainer>
         <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24, top: 8, bottom: 8 }}>
-          <XAxis type="number" domain={[0, 100]} tickFormatter={(v) => `${v}%`} stroke={colors.text} fontSize={12} />
+          <XAxis type="number" stroke={colors.text} fontSize={12} allowDecimals={false} />
           <YAxis type="category" dataKey="agent" width={90} stroke={colors.text} fontSize={13} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: colors.border, opacity: 0.3 }} />
-          <Bar dataKey="winRate" radius={[0, 4, 4, 0]}>
-            {data.map((entry) => (
-              <Cell key={entry.agent} fill={colors.accent} />
-            ))}
-          </Bar>
+
+          <Bar dataKey="wins" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+          <Bar dataKey="losses" fill="#ef4444" radius={[0, 4, 4, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
