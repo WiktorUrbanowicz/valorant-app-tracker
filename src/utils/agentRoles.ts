@@ -40,6 +40,7 @@ export const AGENT_ROLES: Record<string, AgentRole> = {
   Chamber: "Sentinel",
   Deadlock: "Sentinel",
   Vyse: "Sentinel",
+  Veto: "Sentinel",
 };
 
 export function getAgentRole(agent: string): AgentRole | "Unknown" {

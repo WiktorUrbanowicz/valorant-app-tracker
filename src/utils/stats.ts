@@ -3,6 +3,11 @@
 import type { Match } from "../api/types";
 import { getAgentRole } from "./agentRoles";
 
+// Only actual competitive/unrated maps — excludes deathmatch arenas like
+// "Skirmish A/B", "The Range", etc. that HenrikDev reports as a "map" for
+// non-standard modes but that don't belong in a map performance breakdown.
+const REAL_MAPS = new Set(["Ascent", "Bind", "Breeze", "Fracture", "Haven", "Icebox", "Lotus", "Pearl", "Split", "Sunset", "Abyss", "Corrode"]);
+
 export interface AgentStats {
   agent: string;
   wins: number;
@@ -20,13 +25,11 @@ export function getWinRateByAgent(matches: Match[], playerName: string, playerTa
   const statsByAgent = new Map<string, { wins: number; losses: number }>();
 
   for (const match of matches) {
-    // Dodane znaki zapytania (?) zabezpieczają przed nullami
     const player = match.players?.all_players?.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
     if (!player) continue;
 
     const teamKey = player.team.toLowerCase() as "red" | "blue";
     const won = match.teams[teamKey]?.has_won ?? false;
-
     const current = statsByAgent.get(player.character) ?? { wins: 0, losses: 0 };
     if (won) {
       current.wins += 1;
@@ -71,13 +74,14 @@ export function getPerformanceByMap(matches: Match[], playerName: string, player
   const statsByMap = new Map<string, { wins: number; losses: number; kills: number; deaths: number; assists: number }>();
 
   for (const match of matches) {
-    // Dodane znaki zapytania (?)
     const player = match.players?.all_players?.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
     if (!player) continue;
 
+    const map = match.metadata.map;
+    if (!REAL_MAPS.has(map)) continue;
+
     const teamKey = player.team.toLowerCase() as "red" | "blue";
     const won = match.teams[teamKey]?.has_won ?? false;
-    const map = match.metadata.map;
 
     const current = statsByMap.get(map) ?? { wins: 0, losses: 0, kills: 0, deaths: 0, assists: 0 };
     if (won) {
@@ -124,7 +128,6 @@ export function getRoleBreakdown(matches: Match[], playerName: string, playerTag
   let totalGames = 0;
 
   for (const match of matches) {
-    // Dodane znaki zapytania (?)
     const player = match.players?.all_players?.find((p) => p.name.toLowerCase() === playerName.toLowerCase() && p.tag.toLowerCase() === playerTag.toLowerCase());
     if (!player) continue;
 
